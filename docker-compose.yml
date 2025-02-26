@@ -1,5 +1,18 @@
 services:
-  # Сервис для MySQL
+  # Служба PHP/Apache
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+
+  # Служба MySQL
   mysql:
     image: mysql:8.0
     container_name: laravel_mysql
@@ -8,45 +21,22 @@ services:
       MYSQL_DATABASE: laraveldb
       MYSQL_USER: laraveluser
       MYSQL_PASSWORD: larapass
-    volumes:
-      - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
-    networks:
-      - laravel_network
+    volumes:
+      - mysql_data:/var/lib/mysql
 
-  # Сервис для phpMyAdmin
+  # Служба phpMyAdmin
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: laravel_phpmyadmin
     environment:
       PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
+      MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - "8080:80"
+      - "8081:80"
     depends_on:
       - mysql
-    networks:
-      - laravel_network
-
-  # Сервис для Apache + PHP 8.2/8.3
-  apache_php:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: laravel_apache_php
-    volumes:
-      - ./:/var/www/html
-    ports:
-      - "80:80"
-    depends_on:
-      - mysql
-    networks:
-      - laravel_network
 
 volumes:
   mysql_data:
-
-networks:
-  laravel_network:

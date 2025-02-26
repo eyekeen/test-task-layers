@@ -1,20 +1,40 @@
-# Базовый образ с Apache и PHP 8.2
+# Используем официальный образ PHP 8.2 с Apache
 FROM php:8.2-apache
 
-# Установка расширений PHP
-RUN docker-php-ext-install pdo pdo_mysql
+# Устанавливаем необходимые расширения PHP
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    git \
+    curl \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Копирование конфигурации Apache
-COPY ./apache-config.conf /etc/apache2/sites-available/000-default.conf
+# Установка Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Включение модуля mod_rewrite для Laravel
+# Настройка Apache
 RUN a2enmod rewrite
 
-# Установка рабочей директории
+# Копируем конфигурацию Apache в контейнер
+COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+
+# Устанавливаем рабочую директорию
 WORKDIR /var/www/html
 
-# Копирование кода приложения
-COPY . /var/www/html
+# Копируем исходный код приложения в контейнер
+COPY . .
 
-# Установка прав доступа
-RUN chown -R www-data:www-data /var/www/html
+# Устанавливаем права доступа
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
+
+# Установка зависимостей через Composer
+RUN composer install --optimize-autoloader --no-dev
+
+# Открываем порт для Apache
+EXPOSE 80
