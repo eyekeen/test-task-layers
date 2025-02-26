@@ -29,12 +29,12 @@ WORKDIR /var/www/html
 COPY . .
 
 # Устанавливаем права доступа
+RUN chown -R www-data:www-data /var/www/html
 RUN chown -R www-data:www-data /var/www/html/storage \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# Установка зависимостей через Composer
-RUN composer install --optimize-autoloader --no-dev
+
 
 # Открываем порт для Apache
 EXPOSE 80
