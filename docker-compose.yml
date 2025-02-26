@@ -1,20 +1,35 @@
 services:
   db:
     image: mysql:8.0
-    ports:
-      - "3306:3306"
+    container_name: blog_db
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: blog
       MYSQL_USER: blog
       MYSQL_PASSWORD: blog
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - .:/var/www/html
+    container_name: blog_app
     ports:
       - "8000:80"
+    volumes:
+      - .:/var/www/html
     depends_on:
       - db
+    command: >
+      sh -c "
+        php artisan migrate --seed &&
+        service apache2 start &&
+        tail -F /var/log/apache2/error.log
+      "
+    tty: true
+
+volumes:
+  db_data:
