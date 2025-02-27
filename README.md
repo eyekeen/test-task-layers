@@ -51,13 +51,8 @@ docker-compose exec app php artisan migrate --seed
 ---
 
 
-Фронт
+Фронт: http://localhost:8080
 
-```
-http://localhost:8080
-```
 
-phpmyadmin
-```
-http://localhost:8081
-```
+phpmyadmin: http://localhost:8081
+
