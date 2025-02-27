@@ -50,6 +50,16 @@ docker-compose exec app php artisan migrate --seed
 
 ---
 
+### 6. Даем права пользователю www-data
+```
+docker-compose exec app bash
+```
+
+```
+chown www-data:www-data -R /var/www/html
+```
+
+---
 
 Фронт: http://localhost:8080
 
