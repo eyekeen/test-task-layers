@@ -56,7 +56,7 @@ docker-compose exec app bash
 ```
 
 ```
-chown www-data:www-data -R /var/www/html
+chown www-data:www-data -R /var/www/html/storage
 ```
 
 ---
