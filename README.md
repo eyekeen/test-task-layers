@@ -56,3 +56,6 @@ docker-compose exec app php artisan migrate --seed
 
 phpmyadmin: http://localhost:8081
 
+login: laraveluser
+password: larapass
+
