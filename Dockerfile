@@ -25,8 +25,3 @@ COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
 WORKDIR /var/www/html
 
 COPY . .
-
-
-RUN chown www-data:www-data -R /var/www/html/storage \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache
